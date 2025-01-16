@@ -8,32 +8,40 @@ def print_board(boardgame):
                 display_row += " ".join(" X ")
             else :
                 display_row += " ".join("   ")
-            if n != 2:
+            if n != len(boardgame) -1:
                 display_row += " ".join(" | ")
         print(display_row)
-        if x != 2:
+        if x != len(boardgame) -1:
             print("--------------------------")
 
 
 def ask_pos():
-    pos = input("Send row number and case number to add your sign. eg: 1,2 for first row, second case : ")
-    position = tuple(map(int, pos.split(',')))
-    if boardgame[position[0]-1][position[1]-1] != 0:
+    try:
+        pos = input("Send row number and case number to add your sign. eg: 1,2 for first row, second case : ")
+        position = tuple(map(int, pos.split(',')))
+        row,col = position[0] - 1, position[1] - 1
+        if row not in range(3) or col not in range(3):
+            print("Case doesn't exist, try another one")
+            return ask_pos()
+        if boardgame[row][col] != 0 :
+            print("Case already taken, try another one")
+            return ask_pos()
+
+        else:
+            return row,col
+    except (ValueError, IndexError):
+        print("Wrong input!")
         return ask_pos()
-    else:
-        return position
+
+
 
 def turn(player):
-    global boardgame
     print(f"--- Player {player} turn ---")
-    position = ask_pos()
-    boardgame_pos = boardgame[position[0]-1][position[1]-1]
-    if boardgame_pos == 0 :
-        boardgame[position[0]-1][position[1]-1] = player
+    row,col = ask_pos()
+    boardgame[row][col] = player
     print_board(boardgame)
 
 def check_win():
-    global boardgame
     if boardgame[0][0] != 0 and boardgame[0][0] == boardgame[0][1] and boardgame[0][1] == boardgame[0][2]:
         return check_winner(boardgame[0][0])
     elif boardgame[1][0] != 0 and boardgame[1][0] == boardgame[1][1] and boardgame[1][1] == boardgame[1][2]:
